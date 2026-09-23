@@ -11,12 +11,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Install lightweight CPU-optimized PyTorch
-RUN pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu
+RUN pip install --no-cache-dir --upgrade pip
+
+# Install CPU PyTorch using --extra-index-url so PyPI dependencies remain accessible
+RUN pip install --no-cache-dir torch torchvision --extra-index-url https://download.pytorch.org/whl/cpu
 
 # Install remaining backend dependencies
-RUN pip install --no-cache-dir fastapi uvicorn python-multipart grad-cam opencv-python-headless Pillow google-generativeai firebase-admin python-dotenv numpy
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy backend files
 COPY . .
 
 EXPOSE 8080
