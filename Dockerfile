@@ -17,7 +17,8 @@ RUN pip install --no-cache-dir torch torchvision --index-url https://download.py
 # Install remaining backend dependencies
 RUN pip install --no-cache-dir fastapi uvicorn python-multipart grad-cam opencv-python-headless Pillow google-generativeai firebase-admin python-dotenv numpy
 
-COPY . .
+# Copy backend files
+COPY backend/ .
 
 EXPOSE 8080
 
