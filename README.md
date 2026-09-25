@@ -55,9 +55,9 @@
 ```mermaid
 flowchart TD
     A[ASHA Worker / Rural Clinic] -->|Uploads Retinal Fundus Photo| B[React 18 + Vite Frontend]
-    B -->|Multipart POST /predict| C[Google Cloud Run Container]
+    B -->|Multipart POST /predict| C[Render Container]
     
-    subgraph Google Cloud Run Backend
+    subgraph Render Backend
         C --> D[FastAPI High-Performance Engine]
         D --> E[EfficientNet-B3 CNN Model]
         E -->|Classification: Stages 0 to 4| F[Confidence Scoring]
@@ -78,12 +78,12 @@ flowchart TD
 
 ---
 
-## ☁️ Google Cloud Technologies Leveraged
+## ☁️ Cloud & AI Technologies Leveraged
 
-* **Google Cloud Run**: Containerized, serverless hosting providing automatic scaling, HTTPS encryption, zero idle costs, and low latency for rural inference requests.
+* **Vercel**: High-performance edge deployment for our React 18 frontend, ensuring fast loading speeds even in low-bandwidth rural locations.
+* **Render**: Containerized, cloud-hosted deployment for our FastAPI and PyTorch deep learning backend, providing automated builds and robust inference.
 * **Google Gemini 1.5 Flash**: Rapid multimodal generative AI engine used to synthesize complex ophthalmology findings into 3 actionable sections (Findings, Urgency Level & Referral Window, Lifestyle Advice).
-* **Google Cloud Build**: Automated container CI/CD pipeline from source code to production container image.
-* **Firebase Ecosystem**: Project `drishti-ai-b2c66` for patient screening audit trails and health worker authentication.
+* **Offline-Resilient Local State Architecture**: To guarantee zero downtime and bypass API rate limits, the platform relies on a robust local-storage persistence model for ASHA worker authentication and patient history, removing dependencies on live Firebase limits.
 
 ---
 
@@ -193,28 +193,20 @@ Open **`http://localhost:3000`** in your browser.
 
 ---
 
-## ☁️ Cloud Deployment (Google Cloud Run)
+## ☁️ Cloud Deployment (Render & Vercel)
 
-To deploy the production container directly to Google Cloud:
+### 1. Backend (Render)
+1. Push your repository to GitHub.
+2. Go to [Render](https://render.com) and create a new **Web Service**.
+3. Connect your GitHub repository and set the Root Directory to `backend` (or just deploy from the root Dockerfile).
+4. Add the Environment Variable `GEMINI_API_KEY` with your actual key.
+5. Deploy! Once live, copy your `.onrender.com` URL.
 
-```bash
-# 1. Authenticate with Google Cloud
-gcloud auth login
-
-# 2. Set active Google Cloud project
-gcloud config set project drishti-ai-b2c66
-
-# 3. Deploy containerized backend from the backend directory
-cd backend
-gcloud run deploy drishti-backend \
-  --source . \
-  --region us-central1 \
-  --allow-unauthenticated \
-  --memory 2Gi \
-  --set-env-vars="GEMINI_API_KEY=your_actual_gemini_api_key_here"
-```
-
-Once deployed, copy the generated service URL (e.g. `https://drishti-backend-xyz.a.run.app`) and set it as `VITE_API_URL` in `frontend/.env`.
+### 2. Frontend (Vercel)
+1. Go to [Vercel](https://vercel.com) and import your GitHub repository.
+2. Set the Root Directory to `frontend`.
+3. Add an Environment Variable: `VITE_API_URL` = `<your-render-backend-url>`.
+4. Deploy! Your app will be live with a `.vercel.app` domain.
 
 ---
 
